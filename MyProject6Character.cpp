@@ -14,6 +14,8 @@
 #include "BombActor.h"
 #include "CoinActor.h"
 #include "BombManager.h"
+#include "FactoryBomb.h"
+#include "CoinManager.h"
 
 AMyProject6Character::AMyProject6Character()
 {
@@ -94,6 +96,55 @@ void AMyProject6Character::PlaceBomb()
 		BombManager->SpawnBomb(BombLocation);
 	}
 }
+void AMyProject6Character::PlaceCoin()
+{
+	UCoinManager* CoinManager = UCoinManager::GetInstance(GetWorld());
+	if (CoinManager)
+	{
+		// Pasa la ubicación actual del personaje
+		CoinManager->SpawnCoin(GetActorLocation());
+	}
+}
+/*void AMyProject6Character::SpawnBomb(EBombType BombType)
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	UFactoryBomb* Factory = UFactoryBomb::GetInstance(World);
+	if (Factory)
+	{
+		Factory->CreateBomb(World, BombType, SpawnLocation, SpawnRotation);
+	}
+}*/
+void AMyProject6Character::SpawnBomb(EBombType BombType, TSubclassOf<UFactoryBomb> FactoryClass)
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	// Determinar qué fábrica usar
+	UFactoryBomb* FactoryToUse = CurrentBombFactory;
+
+	// Si se especificó una fábrica, crear una instancia temporal
+	if (FactoryClass)
+	{
+		FactoryToUse = NewObject<UFactoryBomb>(World, FactoryClass);
+	}
+	// Si no hay fábrica actual, crear una por defecto (Negra)
+	else if (!FactoryToUse)
+	{
+		FactoryToUse = NewObject<UBlackFactoryBomb>(World);
+		CurrentBombFactory = FactoryToUse; // Asignar como nueva fábrica actual
+	}
+
+	// Crear la bomba
+	if (FactoryToUse)
+	{
+		FactoryToUse->CreateBomb(World, BombType, GetActorLocation(), FRotator::ZeroRotator);
+	}
+}
 void AMyProject6Character::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
@@ -152,8 +203,61 @@ void AMyProject6Character::ChangeBombMaterials()
 	}
 }
 void AMyProject6Character::CollectCoin(ACoinActor *coin) {
-	UE_LOG(LogTemp, Warning, TEXT("Coin was recollected from the player class"));
-	if (MonedasUnicasRecolectadas.Contains(coin->CoinType)) {
-		
+	if (!coin) return; // Si la moneda no es válida, no hagas nada
+
+	// Inicializa el array para este tipo de moneda si no existe
+	if (!MonedasPorTipo.Contains(coin->CoinType))
+	{
+		MonedasPorTipo.Add(coin->CoinType, TArray<ACoinActor*>());
 	}
+
+	// Añade la moneda al array correspondiente
+	MonedasPorTipo[coin->CoinType].Add(coin);
+
+	// Suma el valor de la moneda al total
+	TotalPuntos += coin->CoinValue;
+
+	// Debug: Muestra información en pantalla y log
+	FString Mensaje = FString::Printf(
+		TEXT("¡Moneda %s recolectada! Valor: %d | Total de este tipo: %d | Puntos: %d"),
+		*UEnum::GetValueAsString(coin->CoinType),
+		coin->CoinValue,
+		MonedasPorTipo[coin->CoinType].Num(),
+		TotalPuntos
+	);
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, Mensaje);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *Mensaje);
+
+	// Destruye la moneda del nivel
+	coin->Destroy();
+
+}
+int32 AMyProject6Character::GetMonedasPorTipo(ECoinType Tipo) const
+{
+	return MonedasPorTipo.Contains(Tipo) ? MonedasPorTipo[Tipo].Num() : 0;
+}
+void AMyProject6Character::MostrarMonedasRecolectadas()
+{
+	for (const auto& Par : MonedasPorTipo)
+	{
+		ECoinType Tipo = Par.Key;
+		int32 Cantidad = Par.Value.Num();
+
+		FString DebugMsg = FString::Printf(
+			TEXT("Tipo: %s | Cantidad: %d"),
+			*UEnum::GetValueAsString(Tipo),
+			Cantidad
+		);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, DebugMsg);
+	}
+}
+void AMyProject6Character::BeginDestroy() {
+	// Limpia las monedas al destruir el actor
+	for (auto& Par : MonedasPorTipo) {
+		Par.Value.Empty();
+	}
+	MonedasPorTipo.Empty();
+	Super::BeginDestroy();
 }

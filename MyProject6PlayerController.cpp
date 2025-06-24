@@ -40,7 +40,21 @@ void AMyProject6PlayerController::SetupInputComponent()
 	InputComponent->BindAction("CambiarMesh", IE_Pressed, this, &AMyProject6PlayerController::OnCambiarMalla);
 	InputComponent->BindAction("CambiarMaterial", IE_Pressed, this, &AMyProject6PlayerController::OnCambiarMaterial);
 	InputComponent->BindAction("DejarBomba", IE_Pressed, this, &AMyProject6PlayerController::OnDejarBomba);
+	InputComponent->BindAction("DejarMonedas", IE_Pressed, this, &AMyProject6PlayerController::OnDejarMonedas);
+	/*InputComponent->BindAction("PlaceSimpleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnPlaceSimpleBomb);
+	InputComponent->BindAction("PlaceGrowBomb", IE_Pressed, this, &AMyProject6PlayerController::OnPlaceGrowBomb);
+	InputComponent->BindAction("PlaceParticleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnPlaceParticleBomb);*/
+	InputComponent->BindAction("BlackSimpleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnBlackSimpleBomb);
+	InputComponent->BindAction("BlackGrowBomb", IE_Pressed, this, &AMyProject6PlayerController::OnBlackGrowBomb);
+	InputComponent->BindAction("BlackParticleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnBlackParticleBomb);
 
+	InputComponent->BindAction("GoldSimpleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnGoldSimpleBomb);
+	InputComponent->BindAction("GoldGrowBomb", IE_Pressed, this, &AMyProject6PlayerController::OnGoldGrowBomb);
+	InputComponent->BindAction("GoldParticleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnGoldParticleBomb);
+
+	InputComponent->BindAction("SilverSimpleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnSilverSimpleBomb);
+	InputComponent->BindAction("SilverGrowBomb", IE_Pressed, this, &AMyProject6PlayerController::OnSilverGrowBomb);
+	InputComponent->BindAction("SilverParticleBomb", IE_Pressed, this, &AMyProject6PlayerController::OnSilverParticleBomb);
 
 }
 void AMyProject6PlayerController::OnCambiarMalla() {
@@ -69,6 +83,106 @@ void AMyProject6PlayerController::OnDejarBomba()
 	if (PlayerCharacter)
 	{
 		PlayerCharacter->PlaceBomb();
+	}
+}
+void AMyProject6PlayerController::OnDejarMonedas() {
+	APawn* ControlledPawn = GetPawn();
+	if (!ControlledPawn) return;
+	AMyProject6Character* PlayerCharacter = Cast<AMyProject6Character>(ControlledPawn);
+	if (PlayerCharacter) {
+		PlayerCharacter->PlaceCoin();
+	}
+}
+/*void AMyProject6PlayerController::OnPlaceSimpleBomb()
+{
+	if (AMyProject6Character* Character1 = Cast<AMyProject6Character>(GetPawn()))
+	{
+		Character1->SpawnBomb(EBombType::Simple);
+	}
+}
+void AMyProject6PlayerController::OnPlaceGrowBomb()
+{
+	if (AMyProject6Character* Character2 = Cast<AMyProject6Character>(GetPawn()))
+	{
+		Character2->SpawnBomb(EBombType::Grow);
+	}
+}
+void AMyProject6PlayerController::OnPlaceParticleBomb()
+{
+	if (AMyProject6Character* Character3 = Cast<AMyProject6Character>(GetPawn()))
+	{
+		Character3->SpawnBomb(EBombType::Particle);
+	}
+}*/
+void AMyProject6PlayerController::OnBlackSimpleBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Simple, UBlackFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnBlackGrowBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Grow, UBlackFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnBlackParticleBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Particle, UBlackFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnGoldSimpleBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Simple, UGoldFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnGoldGrowBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Grow, UGoldFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnGoldParticleBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Particle, UGoldFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnSilverSimpleBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Simple, USilverFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnSilverGrowBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Grow, USilverFactoryBomb::StaticClass());
+	}
+}
+
+void AMyProject6PlayerController::OnSilverParticleBomb()
+{
+	if (AMyProject6Character* MyCharacter = Cast<AMyProject6Character>(GetPawn()))
+	{
+		MyCharacter->SpawnBomb(EBombType::Particle, USilverFactoryBomb::StaticClass());
 	}
 }
 void AMyProject6PlayerController::OnResetVR()

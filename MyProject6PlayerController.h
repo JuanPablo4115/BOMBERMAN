@@ -41,7 +41,19 @@ protected:
 	void OnCambiarMalla();
 	void OnCambiarMaterial();
 	void OnDejarBomba();
-
+	void OnDejarMonedas();
+	/*void OnPlaceSimpleBomb();
+	void OnPlaceGrowBomb();
+	void OnPlaceParticleBomb();*/
+	void OnBlackSimpleBomb();
+	void OnBlackGrowBomb();
+	void OnBlackParticleBomb();
+	void OnGoldSimpleBomb();
+	void OnGoldGrowBomb();
+	void OnGoldParticleBomb();
+	void OnSilverSimpleBomb();
+	void OnSilverGrowBomb();
+	void OnSilverParticleBomb();
 
 };
 
